@@ -1,4 +1,5 @@
 require "spec_helper"
+require "json"
 
 module Shmac
   RSpec.describe SignatureCalculator do
@@ -201,7 +202,7 @@ module Shmac
             " X-Uni-Magic " => "\n abracadabra\n\n",
             "X-Other" => "some other value",
             "X-Uni-Date" => "Thu, 17 Nov 2005 18:49:58 GMT",
-            "Content-MD5" => Digest::MD5.base64digest({ "FirstName" => "Jane" }.to_json),
+            "Content-MD5" => Digest::MD5.base64digest(JSON.dump("FirstName" => "Jane" )),
             "Date": "Mon, 01 Jan 1990 00:00:00 GMT"
           },
           content_type: "application/json"
@@ -222,7 +223,7 @@ module Shmac
             " X-Uni-Magic " => "\n abracadabra\n\n",
             "X-Other" => "some other value",
             "X-Uni-Date" => "Thu, 17 Nov 2005 18:49:58 GMT",
-            "Content-MD5" => Digest::MD5.base64digest({ "FirstName" => "Jane" }.to_json),
+            "Content-MD5" => Digest::MD5.base64digest(JSON.dump("FirstName" => "Jane")),
             "Date": "Mon, 01 Jan 1990 00:00:00 GMT"
           },
           content_type: "application/json"

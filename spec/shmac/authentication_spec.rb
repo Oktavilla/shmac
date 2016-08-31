@@ -11,8 +11,8 @@ module Shmac
         path: "/some-path",
         method: "POST",
         headers: {
-          "X-Content-MD5" => Digest::MD5.base64digest(request_body),
-          "X-Uni-Date" => Time.utc(1990).httpdate
+          "Content-MD5" => Digest::MD5.base64digest(request_body),
+          "Date" => Time.utc(1990).httpdate
         },
         body: request_body,
         content_type: "application/json"
@@ -26,7 +26,32 @@ module Shmac
         header_namespace: "x-uni"
       )
 
-      expect(Authentication.new("password", request).signature).to eq calculator.to_s
+      expect(Authentication.new("password", request, header_namespace: "x-uni").signature).to eq calculator.to_s
+    end
+
+    it "takes a request_adapter that can alter the given request" do
+      fake_request = Request.new(
+        path: "/fake-path",
+        method: "PUT",
+        headers: {
+          "Content-MD5" => "lol",
+          "Date" => Time.utc(1990).httpdate
+        },
+        body: "other",
+        content_type: "application/banana"
+
+      )
+      calculator = SignatureCalculator.new(
+        secret: "password",
+        request: fake_request,
+        header_namespace: "x-uni"
+      )
+
+      adapter = ->(_) { fake_request }
+
+      expect(
+        Authentication.new("password", request, request_adapter: adapter).signature
+      ).to eq calculator.to_s
     end
 
     it "is comparable via signature" do
@@ -73,5 +98,4 @@ module Shmac
       end
     end
   end
-
 end

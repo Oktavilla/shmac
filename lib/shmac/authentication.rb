@@ -5,11 +5,24 @@ module Shmac
   class Authentication
     include Comparable
 
-    attr_reader :secret, :request, :header_namespace
+    attr_reader :secret, :header_namespace
 
-    def initialize secret, request, header_namespace: "x-uni"
+    def self.generate_authorization_header request, secret:, access_key:, organization:, header_namespace: nil
+      AuthorizationHeader.generate(
+        organization: organization,
+        access_key: access_key,
+        signature: self.generate_signature(request, secret: secret, header_namespace: header_namespace)
+      ).to_s
+    end
+
+    def self.generate_signature request, secret:, header_namespace: nil
+      new(secret, request, header_namespace: header_namespace).signature
+    end
+
+    def initialize secret, request, header_namespace: nil, request_adapter: nil
       @secret = secret
       @request = request
+      @request_adapter = request_adapter
       @header_namespace = header_namespace
     end
 
@@ -29,6 +42,14 @@ module Shmac
       return false if request.authorization.to_s.strip.empty?
 
       AuthorizationHeader.new(request.authorization).signature == self.signature
+    end
+
+    def request
+      request_adapter.call @request
+    end
+
+    def request_adapter
+      @request_adapter ||= ->(r) { r }
     end
   end
 end
