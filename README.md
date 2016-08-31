@@ -2,6 +2,8 @@
 
 Simple HMAC authentication in a semi-usable state.
 
+[![Build Status](https://travis-ci.org/Oktavilla/shmac.svg?branch=master)](https://travis-ci.org/Oktavilla/shmac)
+
 ## Installation
 
 Add this line to your application's Gemfile:
