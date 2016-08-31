@@ -3,8 +3,8 @@
 Simple HMAC authentication in a semi-usable state.
 
 [![Build Status](https://travis-ci.org/Oktavilla/shmac.svg?branch=master)](https://travis-ci.org/Oktavilla/shmac)
-[![Test Coverage](https://codeclimate.com/github/Oktavilla/shmac/badges/coverage.svg)](https://codeclimate.com/github/Oktavilla/shmac/coverage)
-[![Code Climate](https://codeclimate.com/github/Oktavilla/shmac/badges/gpa.svg)](https://codeclimate.com/github/Oktavilla/shmac)
+[![Code issues](https://codeclimate.com/github/Oktavilla/shmac/badges/gpa.svg)](https://codeclimate.com/github/Oktavilla/shmac)
+[![Coverage](https://codeclimate.com/github/Oktavilla/shmac/badges/coverage.svg)](https://codeclimate.com/github/Oktavilla/shmac/coverage)
 
 ## Installation
 
