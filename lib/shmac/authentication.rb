@@ -45,6 +45,7 @@ module Shmac
 
     def authentic?
       return false if request.authorization.to_s.strip.empty?
+      return false if request.tampered_body?
 
       given_signature = AuthorizationHeader.new(request.authorization).signature
 

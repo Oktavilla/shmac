@@ -133,6 +133,31 @@ module Shmac
         expect(Authentication.new("password", request).authentic?).to be false
       end
 
+      it "is false if the body has been tampered with" do
+        request = Request.new(
+          path: "/some-path",
+          method: "POST",
+          headers: {},
+          content_type: "application/json"
+        )
+
+        allow(request).to receive(:authorization).and_return Shmac::AuthorizationHeader.generate(
+          organization: "Org",
+          access_key: "test-client",
+          signature: Authentication.new("password", request).signature
+        ).to_s
+
+        expect(
+          Authentication.new("password", request).authentic?
+        ).to be true
+
+        allow(request).to receive(:tampered_body?) { true }
+
+        expect(
+          Authentication.new("password", request).authentic?
+        ).to be false
+      end
+
       it "is false for an empty signature" do
         allow(request).to receive(:authorization).and_return nil
 
