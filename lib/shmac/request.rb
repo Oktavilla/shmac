@@ -32,10 +32,5 @@ module Shmac
     def headers= headers
       @headers = NormalizedHttpHeaders.new(headers).to_h
     end
-
-    def api_version
-      headers.fetch("x-authorization-version", 0).to_i
-    end
   end
-
 end

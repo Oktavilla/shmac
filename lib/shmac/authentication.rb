@@ -5,7 +5,7 @@ module Shmac
   class Authentication
     include Comparable
 
-    attr_reader :secret, :header_namespace
+    attr_reader :secret, :header_namespace, :options
 
     def self.generate_authorization_header request, secret:, access_key:, organization:, header_namespace: nil
       AuthorizationHeader.generate(
@@ -19,11 +19,12 @@ module Shmac
       new(secret, request, header_namespace: header_namespace).signature
     end
 
-    def initialize secret, request, header_namespace: nil, request_adapter: nil
+    def initialize secret, request, header_namespace: nil, request_adapter: nil, options: {}
       @secret = secret
       @request = request
       @request_adapter = request_adapter
       @header_namespace = header_namespace
+      self.options = options
     end
 
     def == other
@@ -34,7 +35,8 @@ module Shmac
       SignatureCalculator.new(
         secret: self.secret,
         request: self.request,
-        header_namespace: self.header_namespace
+        header_namespace: self.header_namespace,
+        options: { skip_path: self.options[:skip_path] }
       ).to_s
     end
 
@@ -50,6 +52,19 @@ module Shmac
 
     def request_adapter
       @request_adapter ||= ->(r) { r }
+    end
+
+    private
+
+    def options= opts = {}
+      unknown_keys = opts.keys - default_options.keys
+      raise ArgumentError.new("Unknown options: #{unknown_keys.join(", ")}") if unknown_keys.any?
+
+      @options = default_options.merge(opts)
+    end
+
+    def default_options
+      { skip_path: false, validate_body_contents: true }
     end
   end
 end

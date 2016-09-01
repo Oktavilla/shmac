@@ -38,9 +38,13 @@ module Shmac
           },
           content_type: "application/json"
         )
-        allow(req).to receive(:api_version) { 1 }
 
-        calculator = new_calculator(request: req)
+        calculator = SignatureCalculator.new(
+          secret: "some-identifier",
+          request: req,
+          header_namespace: "x-uni",
+          options: { skip_path: true }
+        )
 
         expected_string_to_sign = [
           "POST",
@@ -269,7 +273,7 @@ module Shmac
         secret: "some-identifier",
         request: request,
         header_namespace: "x-uni"
-    )
+      )
     end
   end
 end

@@ -47,20 +47,6 @@ module Shmac
       end
     end
 
-    describe "#api_version" do
-      it "defaults to 0" do
-        req = Request.new(path: "/", method: "POST", headers: {})
-
-        expect(req.api_version).to eq 0
-      end
-
-      it "returns the x-authorization-version header" do
-        req = Request.new(path: "/", method: "POST", headers: { "X-Authorization-Version" => "3" })
-
-        expect(req.api_version).to eq 3
-      end
-    end
-
     describe "#authorization" do
       it "returns the X-Authorization header" do
         req = Request.new(path: "/", method: "POST", headers: {

@@ -19,6 +19,43 @@ module Shmac
       )
     end
 
+    describe "#options" do
+      it "has sane defaults" do
+        expect(
+          Authentication.new("test", request).options
+        ).to eq({
+          skip_path: false,
+          validate_body_contents: true
+        })
+      end
+
+      it "can be set through the constructor" do
+        expect(
+          Authentication.new(
+            "test",
+            request,
+            options: {
+              skip_path: true,
+              validate_body_contents: false
+            }
+          ).options
+        ).to eq({
+          skip_path: true,
+          validate_body_contents: false
+        })
+      end
+
+      it "does not allow unknown options" do
+        expect{
+          Authentication.new(
+            "test",
+            request,
+            options: { lol: false }
+          )
+        }.to raise_error(ArgumentError)
+      end
+    end
+
     it "uses the SignatureCalculator to generate a signature from the request" do
       calculator = SignatureCalculator.new(
         secret: "password",
@@ -27,6 +64,22 @@ module Shmac
       )
 
       expect(Authentication.new("password", request, header_namespace: "x-uni").signature).to eq calculator.to_s
+    end
+
+    it "passes the skip_path option signature calculator" do
+      calculator = SignatureCalculator.new(
+        secret: "password",
+        request: request,
+        options: { skip_path: true }
+      )
+
+      expect(
+        Authentication.new(
+          "password",
+          request,
+          options: { skip_path: true }
+        ).signature
+      ).to eq calculator.to_s
     end
 
     it "takes a request_adapter that can alter the given request" do
@@ -80,6 +133,8 @@ module Shmac
 
         expect(Authentication.new("password", request).authentic?).to be false
       end
+
+      it "is false if the content md5 does not match"
 
       it "is false for an empty signature" do
         allow(request).to receive(:authorization).and_return nil

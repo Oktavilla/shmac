@@ -3,12 +3,13 @@ require "base64"
 
 module Shmac
   class SignatureCalculator
-    attr_reader :secret, :request, :header_namespace
+    attr_reader :secret, :request, :header_namespace, :options
 
-    def initialize secret:, request:, header_namespace: nil
+    def initialize secret:, request:, header_namespace: nil, options: {}
       @secret = secret
       @request = request
       @header_namespace = header_namespace.downcase if header_namespace
+      @options = options
     end
 
     def to_s
@@ -34,7 +35,7 @@ module Shmac
 
       # The path is expected by spec but the DPO sends the same message (including headers) to several endpoints
       # We introduce an api version so we do not lose messages
-      parts << request.path unless request.api_version > 0
+      parts << request.path unless options[:skip_path]
 
       parts.join("\n")
     end

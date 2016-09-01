@@ -11,8 +11,14 @@ RSpec.describe Shmac do
       fake_adapater = ->(r) { r }
 
       expect(
-        Shmac.authentication("password", request, namespace: "x-org-name", request_adapter: fake_adapater)
-      ).to eq(Shmac::Authentication.new("password", request, header_namespace: "x-org-name", request_adapter: fake_adapater))
+        Shmac.authentication("password", request, namespace: "x-org-name", request_adapter: fake_adapater, options: {
+          skip_path: true
+        })
+      ).to eq(
+        Shmac::Authentication.new("password", request, header_namespace: "x-org-name", request_adapter: fake_adapater, options: {
+          skip_path: true
+        })
+      )
     end
   end
 
@@ -21,8 +27,10 @@ RSpec.describe Shmac do
       request = double("ActionDispatch::Request", fullpath: "/", request_method: "post", raw_post: "", content_type: "text/html", headers: {})
 
       expect(
-        Shmac.rails("password", request, namespace: "x-org-name")
-      ).to eq(Shmac::Authentication.new("password", request, header_namespace: "x-org-name", request_adapter: Shmac::RequestAdapters::Rails))
+        Shmac.rails("password", request, namespace: "x-org-name", options: { skip_path: true })
+      ).to eq(
+        Shmac::Authentication.new("password", request, header_namespace: "x-org-name", request_adapter: Shmac::RequestAdapters::Rails, options: { skip_path: true })
+      )
     end
   end
 
@@ -31,8 +39,10 @@ RSpec.describe Shmac do
       request = double("Net::Http::Post", method: "post", body: "", content_type: "text/html", headers: {}, uri: URI("https://example.com"), to_hash: {})
 
       expect(
-        Shmac.net_http("password", request, namespace: "x-org-name")
-      ).to eq(Shmac::Authentication.new("password", request, header_namespace: "x-org-name", request_adapter: Shmac::RequestAdapters::NetHttp))
+        Shmac.net_http("password", request, namespace: "x-org-name", options: { skip_path: true })
+      ).to eq(
+        Shmac::Authentication.new("password", request, header_namespace: "x-org-name", request_adapter: Shmac::RequestAdapters::NetHttp, options: { skip_path: true })
+      )
     end
   end
 end
