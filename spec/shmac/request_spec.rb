@@ -47,6 +47,38 @@ module Shmac
       end
     end
 
+    describe "#tampered_body?" do
+      it "false false if no body is sent" do
+        req = Request.new(path: "/", method: "POST", headers: {
+          "Content-MD5" => Digest::MD5.base64digest("some body")
+        })
+
+        expect(req.tampered_body?).to be false
+      end
+
+      it "is false if there are no content md5 to compare with" do
+        req = Request.new(path: "/", method: "POST", headers: {}, body: "some body")
+
+        expect(req.tampered_body?).to be false
+      end
+
+      it "is false if the body contents is equal to the content md5 header" do
+        req = Request.new(path: "/", method: "POST", body: "some body", headers: {
+          "Content-MD5" => Digest::MD5.base64digest("some body")
+        })
+
+        expect(req.tampered_body?).to be false
+      end
+
+      it "is true if the body does not match the content md5 header" do
+        req = Request.new(path: "/", method: "POST", body: "faked body", headers: {
+          "Content-MD5" => Digest::MD5.base64digest("some body")
+        })
+
+        expect(req.tampered_body?).to be true
+      end
+    end
+
     describe "#authorization" do
       it "returns the X-Authorization header" do
         req = Request.new(path: "/", method: "POST", headers: {
@@ -65,5 +97,4 @@ module Shmac
       end
     end
   end
-
 end

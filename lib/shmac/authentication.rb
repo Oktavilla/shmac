@@ -1,5 +1,6 @@
 require "shmac/signature_calculator"
 require "shmac/authorization_header"
+require "shmac/security"
 
 module Shmac
   class Authentication
@@ -28,7 +29,9 @@ module Shmac
     end
 
     def == other
-      other.is_a?(self.class) && self.signature == other.signature
+      return false unless other.is_a?(self.class)
+
+      Security.secure_compare self.signature, other.signature
     end
 
     def signature
@@ -43,7 +46,9 @@ module Shmac
     def authentic?
       return false if request.authorization.to_s.strip.empty?
 
-      AuthorizationHeader.new(request.authorization).signature == self.signature
+      given_signature = AuthorizationHeader.new(request.authorization).signature
+
+      Security.secure_compare given_signature, self.signature
     end
 
     def request

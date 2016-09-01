@@ -33,8 +33,7 @@ module Shmac
       platform_headers = canonicalized_platform_headers.to_s.strip
       parts << platform_headers unless platform_headers.empty?
 
-      # The path is expected by spec but the DPO sends the same message (including headers) to several endpoints
-      # We introduce an api version so we do not lose messages
+      # Some clients do not know to which endpoint a message is sent
       parts << request.path unless options[:skip_path]
 
       parts.join("\n")

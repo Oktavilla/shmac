@@ -1,3 +1,5 @@
+require "shmac/security"
+
 module Shmac
   class AuthorizationHeader
     include Comparable
@@ -17,7 +19,9 @@ module Shmac
     end
 
     def == other
-      other.is_a?(self.class) && self.to_s == other.to_s
+      return false unless other.is_a?(self.class)
+
+      Security.secure_compare self.to_s, other.to_s
     end
 
     def to_s

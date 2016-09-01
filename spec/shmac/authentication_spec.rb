@@ -92,7 +92,6 @@ module Shmac
         },
         body: "other",
         content_type: "application/banana"
-
       )
       calculator = SignatureCalculator.new(
         secret: "password",
@@ -133,8 +132,6 @@ module Shmac
 
         expect(Authentication.new("password", request).authentic?).to be false
       end
-
-      it "is false if the content md5 does not match"
 
       it "is false for an empty signature" do
         allow(request).to receive(:authorization).and_return nil

@@ -1,4 +1,5 @@
 require "shmac/normalized_http_headers"
+require "shmac/security"
 
 module Shmac
   class Request
@@ -22,6 +23,17 @@ module Shmac
     def content_md5
       # Fallback to x-content-md5 for clients that have issues with standard headers
       headers.fetch("content-md5") { headers["x-content-md5"] }
+    end
+
+    def tampered_body?
+      return false unless body
+      return false if content_md5.to_s.strip.empty?
+
+      !content_md5_matches_body?
+    end
+
+    def content_md5_matches_body?
+      Security.secure_compare content_md5, Digest::MD5.base64digest(body)
     end
 
     def authorization

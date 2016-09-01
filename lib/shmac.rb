@@ -1,4 +1,5 @@
 require "shmac/version"
+require "shmac/security"
 require "shmac/authentication"
 require "shmac/request_adapters"
 
