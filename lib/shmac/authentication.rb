@@ -70,7 +70,7 @@ module Shmac
     end
 
     def default_options
-      { skip_path: false, validate_body_contents: true }
+      { skip_path: false }
     end
   end
 end

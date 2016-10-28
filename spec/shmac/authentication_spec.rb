@@ -23,10 +23,7 @@ module Shmac
       it "has sane defaults" do
         expect(
           Authentication.new("test", request).options
-        ).to eq({
-          skip_path: false,
-          validate_body_contents: true
-        })
+        ).to eq(skip_path: false)
       end
 
       it "can be set through the constructor" do
@@ -34,15 +31,9 @@ module Shmac
           Authentication.new(
             "test",
             request,
-            options: {
-              skip_path: true,
-              validate_body_contents: false
-            }
+            options: { skip_path: true }
           ).options
-        ).to eq({
-          skip_path: true,
-          validate_body_contents: false
-        })
+        ).to eq(skip_path: true)
       end
 
       it "does not allow unknown options" do
